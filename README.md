@@ -1,4 +1,5 @@
 Abstract Of The Project :
+
 Objective: This project aims to analyze sentiment in e-commerce product reviews using machine learning techniques, focusing on classification and pairwise review ranking to determine relevance.
 
 Methodology: Utilizing Python's Pandas and Scikit-learn libraries, the project preprocesses and filters a dataset of product ratings and reviews. It employs TF-IDF vectorization and logistic regression for classification, and cosine similarity for pairwise review scoring.

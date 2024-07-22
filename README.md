@@ -1,91 +1,23 @@
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, accuracy_score
-from sklearn.metrics.pairwise import cosine_similarity
+Abstract Of The Project :
+Objective: This project aims to analyze sentiment in e-commerce product reviews using machine learning techniques, focusing on classification and pairwise review ranking to determine relevance.
 
-sns.set(style="whitegrid")
+Methodology: Utilizing Python's Pandas and Scikit-learn libraries, the project preprocesses and filters a dataset of product ratings and reviews. It employs TF-IDF vectorization and logistic regression for classification, and cosine similarity for pairwise review scoring.
 
-data = {
-    'product_name': ['Product A', 'Product A', 'Product B', 'Product B', 'Product C'],
-    'review': [
-        'Great product, really enjoyed it!,
-        'Not bad, could be better.',
-        'Terrible experience, will not buy again.',
-        'Loved it, highly recommend.',
-        'Okay product, not the best.'
-    ],
-    'label': ['informative', 'non-informative', 'informative', 'informative', 'non-informative']
-}
+Results: The project generates insights through visualizations such as cross-tabulations, heatmaps for classification reports, and pie charts illustrating the distribution of informative and non-informative reviews, offering a comprehensive understanding of product sentiment.
 
-df = pd.DataFrame(data)
+Significance: By providing a systematic approach to sentiment analysis, this project equips e-commerce platforms with valuable tools for evaluating customer feedback, enhancing product relevance, and improving overall customer satisfaction and retention.
 
-vectorizer = TfidfVectorizer(stop_words='english')
-X = vectorizer.fit_transform(df['review'])
-y = df['label'].apply(lambda x: 1 if x == 'informative' else 0)
+Workflow :
+1. Data Collection: Gather product reviews data from e-commerce platforms.
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+2. Data Preprocessing and Filtering: Clean and preprocess the data, removing any irrelevant information or noise.
 
-model = LogisticRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
+3. Feature Extraction (TF-IDF Vectorization): Convert text data into numerical feature vectors using TF-IDF vectorization.
 
-report = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
-cross_tab = pd.crosstab(df['product_name'], df['label'])
-accuracy = accuracy_score(y_test, y_pred)
+4. Model Training (Logistic Regression): Train a logistic regression model to classify reviews as informative or non-informative based on their sentiment.
 
-similarity_matrix = cosine_similarity(X)
-similarity_df = pd.DataFrame(similarity_matrix, index=df.index, columns=df.index)
+5. Model Evaluation (Classification Report): Evaluate the performance of the trained model using a classification report, which includes metrics such as precision, recall, and F1-score.
 
-def rank_reviews(product_name, similarity_df, df):
-    product_indices = df[df['product_name'] == product_name].index
-    product_similarity = similarity_df.loc[product_indices, product_indices]
-    ranked_reviews = product_similarity.mean(axis=1).sort_values(ascending=False)
-    return df.loc[ranked_reviews.index]
+6. Pairwise Review Scoring: Calculate pairwise review scores using cosine similarity to rank reviews for each product.
 
-ranked_reviews_A = rank_reviews('Product A', similarity_df, df)
-ranked_reviews_B = rank_reviews('Product B', similarity_df, df)
-ranked_reviews_C = rank_reviews('Product C', similarity_df, df)
-
-print("Dataset:")
-print(df)
-
-print("\nCross-Tabulation of Product Names and Review Labels:")
-print(cross_tab)
-
-print("\nClassification Report:")
-print(pd.DataFrame(report).transpose())
-
-print("\nAccuracy Score:")
-print(accuracy)
-
-print("\nPairwise Review Ranking for Product A:")
-print(ranked_reviews_A)
-
-print("\nPairwise Review Ranking for Product B:")
-print(ranked_reviews_B)
-
-print("\nPairwise Review Ranking for Product C:")
-print(ranked_reviews_C)
-
-plt.figure(figsize=(10, 6))
-sns.heatmap(cross_tab, annot=True, fmt='d', cmap='Blues')
-plt.title('Cross-Tabulation of Product Names and Review Labels')
-plt.show()
-
-report_df = pd.DataFrame(report).transpose()
-
-plt.figure(figsize=(10, 6))
-sns.heatmap(report_df.iloc[:-1, :].T, annot=True, cmap='Blues')
-plt.title('Classification Report')
-plt.show()
-
-label_counts = df['label'].value_counts()
-
-plt.figure(figsize=(8, 8))
-plt.pie(label_counts, labels=label_counts.index, autopct='%1.1f%%', startangle=140, colors=['#66b3ff','#99ff99'])
-plt.title('Distribution of Informative and Non-Informative Reviews')
-plt.show()
+7. Visualization and Interpretation: Visualize the results through various charts and graphs, such as cross-tabulations, heatmaps, and pie charts, to interpret the findings and gain insights into product sentiment and relevance.
